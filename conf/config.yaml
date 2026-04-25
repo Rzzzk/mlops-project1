@@ -4,3 +4,11 @@ defaults:
   - dataset: default
   - model: default
   - _self_
+
+# Disable Hydra's default behaviour of changing the working directory to
+# outputs/<date>/<time>/ at runtime. This ensures that all relative paths
+# in the config (e.g. data/raw/train.csv) stay anchored to the project root,
+# consistent with ARCHITECTURE.md Rule 1.
+hydra:
+  job:
+    chdir: false
