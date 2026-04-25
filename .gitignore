@@ -87,3 +87,15 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# uv virtual environment
+.venv/
+
+# Hydra runtime outputs (timestamped logs, resolved configs)
+outputs/
+multirun/
+
+# Trained model artifacts (tracked via DVC or model registry, not git)
+models/*.pkl
+models/*.pt
+models/*.onnx

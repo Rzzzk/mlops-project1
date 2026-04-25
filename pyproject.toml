@@ -17,3 +17,9 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "sphinx>=7.3.7",
 ]
+
+# Tell Pyrefly to use the uv-managed virtual environment's interpreter so it
+# resolves imports (hydra, joblib, omegaconf, sklearn, …) from .venv/
+# instead of the system Python's site-packages.
+[tool.pyrefly]
+python_interpreter = ".venv/bin/python"
