@@ -1,0 +1,23 @@
+# @package dataset
+
+# Paths (relative to project root, per ARCHITECTURE.md Rule 1)
+train_path: data/raw/train.csv
+
+# Target variable
+target: Survived
+
+# Feature columns
+numeric_features:
+  - Age
+  - Fare
+  - SibSp
+  - Parch
+
+categorical_features:
+  - Embarked
+  - Sex
+  - Pclass
+
+# Train / validation split
+test_size: 0.2
+random_state: 42

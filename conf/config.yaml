@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - dataset: default
+  - model: default
+  - _self_

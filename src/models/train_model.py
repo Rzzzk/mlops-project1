@@ -1,7 +1,9 @@
 import os
 
+import hydra
 import joblib
 import pandas as pd
+from omegaconf import DictConfig
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
@@ -12,14 +14,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
-def create_pipeline(classifier):
+def create_pipeline(classifier, cfg: DictConfig):
     """
     Creates a full Scikit-Learn pipeline including preprocessing.
-    This ensures that preprocessing steps are saved with the model.
+    Feature column names are driven by the Hydra dataset config.
     """
-    # Define features
-    numeric_features = ["Age", "Fare", "SibSp", "Parch"]
-    categorical_features = ["Embarked", "Sex", "Pclass"]
+    numeric_features = list(cfg.dataset.numeric_features)
+    categorical_features = list(cfg.dataset.categorical_features)
 
     # Preprocessing for numeric data: Impute missing + Scale
     numeric_transformer = Pipeline(
@@ -45,26 +46,34 @@ def create_pipeline(classifier):
         ]
     )
 
-    # Create the full pipeline
     return Pipeline(steps=[("preprocessor", preprocessor), ("classifier", classifier)])
 
 
-def run_training():
+@hydra.main(version_base=None, config_path="../../conf", config_name="config")
+def run_training(cfg: DictConfig) -> None:
     # 1. Data Loading
-    train_df = pd.read_csv("data/raw/train.csv")
+    train_df = pd.read_csv(cfg.dataset.train_path)
 
     # Feature selection
-    X = train_df.drop("Survived", axis=1)
-    y = train_df["Survived"]
+    X = train_df.drop(cfg.dataset.target, axis=1)
+    y = train_df[cfg.dataset.target]
 
     X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=0.2, random_state=42
+        X,
+        y,
+        test_size=cfg.dataset.test_size,
+        random_state=cfg.dataset.random_state,
     )
 
     # 2. Define models to compare
     models = {
-        "LogisticRegression": LogisticRegression(),
-        "RandomForest": RandomForestClassifier(n_estimators=100, random_state=42),
+        "LogisticRegression": LogisticRegression(
+            max_iter=cfg.model.logistic_regression.max_iter
+        ),
+        "RandomForest": RandomForestClassifier(
+            n_estimators=cfg.model.random_forest.n_estimators,
+            random_state=cfg.model.random_forest.random_state,
+        ),
     }
 
     best_acc = 0
@@ -73,7 +82,7 @@ def run_training():
 
     # 3. Automated Training & Evaluation
     for name, model in models.items():
-        pipeline = create_pipeline(model)
+        pipeline = create_pipeline(model, cfg)
         pipeline.fit(X_train, y_train)
 
         preds = pipeline.predict(X_val)
@@ -87,8 +96,8 @@ def run_training():
 
     # 4. Model Saving
     if best_model_pipeline:
-        os.makedirs("models", exist_ok=True)
-        model_path = "models/best_model.pkl"
+        model_path = cfg.model.output_path
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
         joblib.dump(best_model_pipeline, model_path)
         print(f"\nSaved Best Model: {best_model_name} to {model_path}")
 

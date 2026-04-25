@@ -1,0 +1,14 @@
+# @package model
+
+# Output path for the saved model artifact (relative to project root)
+output_path: models/best_model.pkl
+
+# Hyperparameters for each candidate model
+logistic_regression:
+  # No extra hyperparameters beyond sklearn defaults for now;
+  # add max_iter, C, solver, etc. here as needed.
+  max_iter: 1000
+
+random_forest:
+  n_estimators: 100
+  random_state: 42
