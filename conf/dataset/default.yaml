@@ -1,12 +1,11 @@
 # @package dataset
 
-# Paths (relative to project root, per ARCHITECTURE.md Rule 1)
 train_path: data/raw/train.csv
+processed_train_path: data/processed/train.csv
+processed_val_path: data/processed/val.csv
 
-# Target variable
 target: Survived
 
-# Feature columns
 numeric_features:
   - Age
   - Fare
@@ -18,6 +17,5 @@ categorical_features:
   - Sex
   - Pclass
 
-# Train / validation split
 test_size: 0.2
 random_state: 42

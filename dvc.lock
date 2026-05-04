@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: uv run python src/data/prepare_data.py
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 61fdd54abdbf6a85b778e937122e1194
+      size: 60302
+    - path: src/data/prepare_data.py
+      hash: md5
+      md5: af62579178a3577ee48f38ce4949ff98
+      size: 1050
+    params:
+      conf/dataset/default.yaml:
+        random_state: 42
+        test_size: 0.2
+    outs:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9686d82c101fb93c16c0eb7434d7fc8b
+      size: 49384
+    - path: data/processed/val.csv
+      hash: md5
+      md5: 626ca4cef4ea6a84a709d09f84af0a28
+      size: 12698
+  train:
+    cmd: uv run python src/models/train_model.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9686d82c101fb93c16c0eb7434d7fc8b
+      size: 49384
+    - path: data/processed/val.csv
+      hash: md5
+      md5: 626ca4cef4ea6a84a709d09f84af0a28
+      size: 12698
+    - path: src/models/train_model.py
+      hash: md5
+      md5: 606efa3b2f234e41117528482136b51f
+      size: 2845
+    params:
+      conf/dataset/default.yaml:
+        categorical_features:
+        - Embarked
+        - Sex
+        - Pclass
+        numeric_features:
+        - Age
+        - Fare
+        - SibSp
+        - Parch
+        target: Survived
+      conf/model/default.yaml:
+        logistic_regression.max_iter: 1000
+        random_forest.n_estimators: 100
+        random_forest.random_state: 42
+    outs:
+    - path: models/best_model.pkl
+      hash: md5
+      md5: c3b48155b9c539147cad62486994ffe2
+      size: 2428123
