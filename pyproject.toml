@@ -18,6 +18,7 @@ dependencies = [
     "python-dotenv>=0.5.1",
     "scikit-learn>=1.8.0",
     "sphinx>=7.3.7",
+    "wandb>=0.26.1",
 ]
 
 # Tell Pyrefly to use the uv-managed virtual environment's interpreter so it

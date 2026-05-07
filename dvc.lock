@@ -37,8 +37,8 @@ stages:
       size: 12698
     - path: src/models/train_model.py
       hash: md5
-      md5: 606efa3b2f234e41117528482136b51f
-      size: 2845
+      md5: 06e841feca0b6d20296c42063ef07a8b
+      size: 4789
     params:
       conf/dataset/default.yaml:
         categorical_features:

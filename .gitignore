@@ -98,3 +98,7 @@ multirun/
 models/*.pkl
 models/*.pt
 models/*.onnx
+
+# W&B dire
+wandb/
+*.wandb
